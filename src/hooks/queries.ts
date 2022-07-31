@@ -13,7 +13,6 @@ export const useTeams = (enabled: boolean): UseQueryResult =>
                           .then(({ error }) => Promise.reject(new Error(error)))
             ),
         {
-            refetchInterval: 10000,
-            enabled
+            refetchInterval: enabled ? 10000 : 0
         }
     );

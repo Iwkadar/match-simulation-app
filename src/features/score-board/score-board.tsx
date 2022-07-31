@@ -7,8 +7,8 @@ import { Teams } from '../../types/teams';
 const ScoreBoard = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const matches = useAppSelector(selectScoreBoardMatches);
-    const [enabledFetching, setEnabledFetching] = useState(false);
-    const { data, isSuccess, dataUpdatedAt } = useTeams(enabledFetching);
+    const [enabledRefetchInterval, setEnabledRefetchInterval] = useState(false);
+    const { data, isSuccess, dataUpdatedAt } = useTeams(enabledRefetchInterval);
 
     useEffect(() => {
         if (isSuccess) {
@@ -17,7 +17,7 @@ const ScoreBoard = (): JSX.Element => {
     }, [isSuccess, dataUpdatedAt]);
 
     const startSimulation = () => {
-        setEnabledFetching(true);
+        setEnabledRefetchInterval(true);
     };
 
     return (
