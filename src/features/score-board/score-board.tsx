@@ -7,24 +7,42 @@ import { Teams } from '../../types/teams';
 const ScoreBoard = (): JSX.Element => {
     const dispatch = useAppDispatch();
     const matches = useAppSelector(selectScoreBoardMatches);
+    const [buttonText, setButtonText] = useState('Start');
     const [enabledRefetchInterval, setEnabledRefetchInterval] = useState(false);
-    const { data, isSuccess, dataUpdatedAt } = useTeams(enabledRefetchInterval);
+    const { data, isSuccess } = useTeams(enabledRefetchInterval);
 
     useEffect(() => {
         if (isSuccess) {
             dispatch(simulationStarted(data as Teams));
         }
-    }, [isSuccess, dataUpdatedAt]);
+    }, [isSuccess]);
 
     const startSimulation = () => {
         setEnabledRefetchInterval(true);
+
+        setButtonText((prev) => {
+            let newButtonText = '';
+            switch (prev) {
+                case 'Start':
+                case 'Restart':
+                    newButtonText = 'Finish';
+                    break;
+                case 'Finish':
+                    newButtonText = 'Restart';
+                    break;
+                default:
+                    newButtonText = 'Start';
+            }
+            return newButtonText;
+        });
     };
 
     return (
         <div>
             <button type="button" onClick={startSimulation}>
-                Start
+                {buttonText}
             </button>
+
             {Object.keys(matches).length > 0 &&
                 Object.keys(matches).map((key) => (
                     <div key={matches[key].teamsId[0]}>

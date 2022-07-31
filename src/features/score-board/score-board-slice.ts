@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { matchesById } from '../../utils/data-parser';
 import { Teams } from '../../types/teams';
-import { Matches, MatchesById } from '../../types/matches';
+import { Matches, ScoreBoard } from '../../types/score-board';
 import { RootState } from '../../types/app';
 
-const defaultState: MatchesById = {
+const defaultState: ScoreBoard = {
     matches: { byId: {} }
 };
 
