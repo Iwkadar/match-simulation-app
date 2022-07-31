@@ -1,0 +1,36 @@
+{
+    "presets": [
+        "@babel/preset-typescript",
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "chrome": "56"
+                }
+            }
+        ],
+        [
+            "@babel/preset-react",
+            {
+                "runtime": "automatic"
+            }
+        ]
+    ],
+    "env": {
+        "test": {
+            "presets": [
+                [
+                    "@babel/preset-env",
+                    {
+                        "targets": {
+                            "node": "current"
+                        }
+                    }
+                ]
+            ]
+        }
+    },
+    "plugins": [
+        "react-hot-loader/babel"
+    ]
+}
