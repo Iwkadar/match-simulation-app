@@ -14,8 +14,14 @@ const teams = {
     5: { id: 5, name: 'Uruguay', score: 0 }
 };
 
+function getRandomInt() {
+    return Math.floor(Math.random() * 6);
+}
+
 app.get('/teams', (req, res) => {
     res.json(teams);
+    const randomInt = getRandomInt();
+    teams[randomInt].score += 1;
 });
 
 app.use(express.static(path.resolve(__dirname, '../dist')));

@@ -1,13 +1,17 @@
-import { StrictMode } from 'react';
+import { lazy, Suspense } from 'react';
 import { hot } from 'react-hot-loader/root';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+const ScoreBoard = lazy(() => import('./score-board'));
 
 export const App = hot(
     (): JSX.Element => (
-        <StrictMode>
-            <Router>
-                <div>Hello</div>
-            </Router>
-        </StrictMode>
+        <Router>
+            <Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                    <Route path="/" element={<ScoreBoard />} />
+                </Routes>
+            </Suspense>
+        </Router>
     )
 );
