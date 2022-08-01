@@ -22,6 +22,7 @@ const ScoreBoard = (): JSX.Element => {
     const [enabledInitData, setEnabledInitData] = useState(false);
     const { data: initTeamsData } = useInitTeams(enabledInitData);
     const { data, dataUpdatedAt } = useTeams(initTeamsData);
+    const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>();
 
     const [totalGoals, setTotalGoals] = useState(0);
 
@@ -37,6 +38,9 @@ const ScoreBoard = (): JSX.Element => {
     }, [dataUpdatedAt]);
 
     const finishSimulation = () => {
+        if (timer) {
+            clearTimeout(timer);
+        }
         setEnabledInitData(false);
         dispatch(simulationFinished());
     };
@@ -44,6 +48,11 @@ const ScoreBoard = (): JSX.Element => {
     const startSimulation = () => {
         setEnabledInitData(true);
         dispatch(simulationStarted());
+
+        const timeoutId = setTimeout(() => {
+            finishSimulation();
+        }, 91000);
+        setTimer(timeoutId);
     };
 
     const ButtonEl = ({ text, onClicked }: { text: string; onClicked: () => void }): JSX.Element => (
