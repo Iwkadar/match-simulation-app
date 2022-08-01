@@ -1,10 +1,15 @@
 import { useQuery, UseQueryResult } from 'react-query';
 
-export const useTeams = (enabled: boolean): UseQueryResult =>
+export const useTeams = (initTeamsData: unknown): UseQueryResult =>
     useQuery(
-        '',
+        [initTeamsData],
         () =>
-            fetch('/teams').then((response) =>
+            fetch('/teams', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then((response) =>
                 response.ok
                     ? response.json()
                     : response
@@ -13,6 +18,25 @@ export const useTeams = (enabled: boolean): UseQueryResult =>
                           .then(({ error }) => Promise.reject(new Error(error)))
             ),
         {
-            refetchInterval: enabled ? 10000 : 0
+            enabled: !!initTeamsData,
+            refetchInterval: 10000
+        }
+    );
+
+export const useInitTeams = (enabled: boolean): UseQueryResult =>
+    useQuery(
+        [enabled],
+        () =>
+            fetch('/init').then((response) =>
+                response.ok
+                    ? response.json()
+                    : response
+                          .text()
+                          .then((text) => JSON.parse(text))
+                          .then(({ error }) => Promise.reject(new Error(error)))
+            ),
+        {
+            enabled,
+            refetchInterval: false
         }
     );

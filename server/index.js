@@ -18,6 +18,12 @@ function getRandomInt() {
     return Math.floor(Math.random() * 6);
 }
 
+app.get('/init', (req, res) => {
+    // eslint-disable-next-line no-return-assign
+    Object.keys(teams).forEach((key) => (teams[key].score = 0));
+    res.json(teams);
+});
+
 app.get('/teams', (req, res) => {
     res.json(teams);
     const randomInt = getRandomInt();

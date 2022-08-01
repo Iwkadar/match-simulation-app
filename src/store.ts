@@ -5,5 +5,7 @@ const rootReducer = combineReducers({
     scoreBoard: scoreBoardReducer
 });
 
-/* eslint no-underscore-dangle: 0 */
-export const store = configureStore({ reducer: rootReducer });
+export const setupStore = () =>
+    configureStore({
+        reducer: rootReducer
+    });

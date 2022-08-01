@@ -1,27 +1,22 @@
 import { loadFeature, defineFeature } from 'jest-cucumber';
-import { Provider } from 'react-redux';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryProvider } from '../../context/query-provider';
-import { store } from '../../store';
-import { useTeams } from '../../hooks/queries';
-import { useAppSelector } from '../../hooks/redux';
+import { setupStore } from '../../store';
+import { useInitTeams, useTeams } from '../../hooks/queries';
+import { renderWithProviders } from '../../utils/test-utils';
+import { simulationFinished, simulationStarted, updatedScore } from './score-board-slice';
 
 import ScoreBoard from './score-board';
 
 const feature = loadFeature('src/features/score-board/start-simulation.feature');
 
 jest.mock('../../hooks/queries', () => ({
+    useInitTeams: jest.fn(),
     useTeams: jest.fn()
 }));
 
-jest.mock('../../hooks/redux', () => ({
-    useAppSelector: jest.fn(),
-    useAppDispatch: jest.fn()
-}));
-
 const teams = {
-    0: { id: 0, name: 'Poland', score: 0 },
+    0: { id: 0, name: 'Poland', score: 1 },
     1: { id: 1, name: 'Germany', score: 0 },
     2: { id: 2, name: 'Brazil', score: 0 },
     3: { id: 3, name: 'Mexico', score: 0 },
@@ -29,52 +24,48 @@ const teams = {
     5: { id: 5, name: 'Uruguay', score: 0 }
 };
 
-const scoreBoardStore = {
-    matches: {
-        byId: {
-            0: { id: 0, teamsId: [1, 0] },
-            1: { id: 1, teamsId: [2, 3] },
-            2: { id: 2, teamsId: [4, 5] }
-        }
-    }
-};
-
 defineFeature(feature, (test) => {
     let containerEl: HTMLElement;
 
     beforeEach(() => {
-        (useAppSelector as jest.Mock).mockImplementation(() => scoreBoardStore.matches.byId);
+        (useInitTeams as jest.Mock).mockImplementation((enabled) => {
+            if (enabled) {
+                return {
+                    data: teams
+                };
+            }
+            return {
+                data: undefined
+            };
+        });
 
         (useTeams as jest.Mock).mockImplementation((enabled) => {
             if (enabled) {
-                teams['0'].score += 1;
-                useAppSelector(() => scoreBoardStore.matches.byId);
                 return {
                     data: teams,
                     dataUpdatedAt: true
                 };
             }
             return {
-                data: teams,
-                dataUpdatedAt: true
+                data: undefined,
+                dataUpdatedAt: false
             };
         });
     });
 
     test('Clicking start button', ({ given, when, then }) => {
-        given('I am on the start page', () => {
-            const { container } = render(
-                <Provider store={store}>
-                    <QueryProvider>
-                        <ScoreBoard />
-                    </QueryProvider>
-                </Provider>
-            );
+        given('I am on the score board page', () => {
+            const { container } = renderWithProviders(<ScoreBoard />);
             containerEl = container;
         });
 
         when('I click on "start button"', () => {
             userEvent.click(screen.getByRole('button', { name: /Start/i }));
+        });
+
+        then('Button should change text to Finish', () => {
+            const buttonElement = containerEl.getElementsByTagName('button');
+            expect(buttonElement[0].firstChild!.nodeValue).toEqual('Finish');
         });
 
         then('Simulation should start', () => {
@@ -83,7 +74,62 @@ defineFeature(feature, (test) => {
             // eslint-disable-next-line no-return-assign
             Array.from(elementsWithScore, (e) => (totalScore += parseInt(e.textContent!, 10)));
             expect(totalScore).toBe(1);
-            expect(useTeams).toHaveBeenCalledTimes(2);
+            expect(useInitTeams).toHaveBeenCalledTimes(4);
+            expect(useTeams).toHaveBeenCalledTimes(4);
+        });
+    });
+
+    test('Clicking finish button', ({ given, when, then }) => {
+        given('I am on the score board page', () => {
+            const store = setupStore();
+            store.dispatch(simulationStarted());
+            store.dispatch(updatedScore(teams));
+            const { container } = renderWithProviders(<ScoreBoard />, { store });
+            containerEl = container;
+        });
+
+        when('I click on "finish button"', () => {
+            userEvent.click(screen.getByRole('button', { name: /Finish/i }));
+        });
+
+        then('Button should change text to Restart', () => {
+            const buttonElement = containerEl.getElementsByTagName('button');
+            expect(buttonElement[0].firstChild!.nodeValue).toEqual('Restart');
+        });
+
+        then('Simulation should finish', () => {
+            let totalScore = 0;
+            const elementsWithScore = containerEl.getElementsByClassName('score');
+            // eslint-disable-next-line no-return-assign
+            Array.from(elementsWithScore, (e) => (totalScore += parseInt(e.textContent!, 10)));
+            expect(totalScore).toBe(1);
+        });
+    });
+
+    test('Clicking restart button', ({ given, when, then }) => {
+        given('I am on the score board page', () => {
+            const store = setupStore();
+            store.dispatch(simulationFinished());
+            store.dispatch(updatedScore(teams));
+            const { container } = renderWithProviders(<ScoreBoard />, { store });
+            containerEl = container;
+        });
+
+        when('I click on "restart button"', () => {
+            userEvent.click(screen.getByRole('button', { name: /Restart/i }));
+        });
+
+        then('Button should change text to Finish', () => {
+            const buttonElement = containerEl.getElementsByTagName('button');
+            expect(buttonElement[0].firstChild!.nodeValue).toEqual('Finish');
+        });
+
+        then('Simulation should start', () => {
+            let totalScore = 0;
+            const elementsWithScore = containerEl.getElementsByClassName('score');
+            // eslint-disable-next-line no-return-assign
+            Array.from(elementsWithScore, (e) => (totalScore += parseInt(e.textContent!, 10)));
+            expect(totalScore).toBe(1);
         });
     });
 });

@@ -2,8 +2,7 @@ import * as A from 'fp-ts/ReadonlyArray';
 import * as R from 'fp-ts/ReadonlyRecord';
 import { pipe } from 'fp-ts/function';
 import * as S from 'fp-ts/string';
-import { Teams } from '../types/teams';
-import { Matches } from '../types/matches';
+import { Matches, Teams } from '../types/score-board';
 
 const matches = [
     ['Germany', 'Poland'],
