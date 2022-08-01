@@ -105,7 +105,7 @@ const ScoreBoard = (): JSX.Element => {
                                     key={matches[key].teamsId[0]}
                                     sx={{
                                         display: 'flex',
-                                        justifyContent: 'space-between;',
+                                        justifyContent: 'space-between',
                                         alignItems: 'center',
                                         height: '100%',
                                         width: '100%',
@@ -129,7 +129,14 @@ const ScoreBoard = (): JSX.Element => {
                                     </Box>
                                 </Box>
                             ))}
-                        <Typography gutterBottom component="div">
+                        <Typography
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'right'
+                            }}
+                            gutterBottom
+                            component="div"
+                        >
                             Total goals: {totalGoals}
                         </Typography>
                     </CardContent>
