@@ -1,7 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import scoreBoardReducer from './features/score-board/score-board-slice';
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     scoreBoard: scoreBoardReducer
 });
 
