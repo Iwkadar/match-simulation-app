@@ -115,16 +115,16 @@ const ScoreBoard = (): JSX.Element => {
                                 >
                                     <Box sx={{ paddingRight: '20px' }}>
                                         <Typography gutterBottom variant="h5" component="div">
-                                            <span>{teams[matches[key].teamsId[0]].name}</span>
-                                            <span> vs </span>
-                                            <span>{teams[matches[key].teamsId[1]].name}</span>
+                                            <Box component="span">{teams[matches[key].teamsId[0]].name}</Box>
+                                            <Box component="span"> vs </Box>
+                                            <Box component="span">{teams[matches[key].teamsId[1]].name}</Box>
                                         </Typography>
                                     </Box>
                                     <Box>
                                         <Typography gutterBottom variant="h5" component="div">
-                                            <span className="score">{teams[matches[key].teamsId[0]].score}</span>
-                                            <span> : </span>
-                                            <span className="score">{teams[matches[key].teamsId[1]].score}</span>
+                                            <Box component="span">{teams[matches[key].teamsId[0]].score}</Box>
+                                            <Box component="span"> : </Box>
+                                            <Box component="span">{teams[matches[key].teamsId[1]].score}</Box>
                                         </Typography>
                                     </Box>
                                 </Box>
