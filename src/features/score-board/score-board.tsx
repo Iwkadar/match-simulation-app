@@ -19,8 +19,8 @@ const ScoreBoard = (): JSX.Element => {
     const matches = useAppSelector(selectScoreBoardMatches);
     const teams = useAppSelector(selectScoreBoardTeams);
     const status = useAppSelector(selectScoreBoardStatus);
-    const [enabledInitData, setEnabledInitData] = useState(false);
-    const { data: initTeamsData } = useInitTeams(enabledInitData);
+    const [enabledUseInitTeamsQuery, setEnabledUseInitTeamsQuery] = useState(false);
+    const { data: initTeamsData } = useInitTeams(enabledUseInitTeamsQuery);
     const { data, dataUpdatedAt } = useTeams(initTeamsData);
     const [timer, setTimer] = useState<ReturnType<typeof setTimeout>>();
 
@@ -41,12 +41,12 @@ const ScoreBoard = (): JSX.Element => {
         if (timer) {
             clearTimeout(timer);
         }
-        setEnabledInitData(false);
+        setEnabledUseInitTeamsQuery(false);
         dispatch(simulationFinished());
     };
 
     const startSimulation = () => {
-        setEnabledInitData(true);
+        setEnabledUseInitTeamsQuery(true);
         dispatch(simulationStarted());
 
         const timeoutId = setTimeout(() => {
